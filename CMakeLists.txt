@@ -35,8 +35,8 @@ if ((NOT BUILD_TYPE STREQUAL RELEASE) AND (NOT BUILD_TYPE STREQUAL DEBUG))
 endif ()
 
 # setup some defaults flags for everything
-set(DEFAULT_DEBUG_CXX_FLAGS -Wall -O2)
-set(DEFAULT_RELEASE_CXX_FLAGS -Wall -O3)
+set(DEFAULT_DEBUG_FLAGS -Wall -O2)
+set(DEFAULT_RELEASE_FLAGS -Wall -O3)
 
 macro(hint_flag FLAG DESCRIPTION)
     if (NOT DEFINED ${FLAG})
