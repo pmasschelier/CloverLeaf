@@ -4,7 +4,7 @@ if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
     cmake_policy(SET CMP0135 NEW)
 endif ()
 
-project(cloverleaf VERSION 1.0 LANGUAGES CXX)
+project(cloverleaf VERSION 1.0 LANGUAGES C CXX)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -35,8 +35,8 @@ if ((NOT BUILD_TYPE STREQUAL RELEASE) AND (NOT BUILD_TYPE STREQUAL DEBUG))
 endif ()
 
 # setup some defaults flags for everything
-set(DEFAULT_DEBUG_FLAGS -Wall -O2)
-set(DEFAULT_RELEASE_FLAGS -Wall -O3)
+set(DEFAULT_DEBUG_FLAGS -Wall -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O2)
+set(DEFAULT_RELEASE_FLAGS -Wall -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -O3)
 
 macro(hint_flag FLAG DESCRIPTION)
     if (NOT DEFINED ${FLAG})
@@ -71,7 +71,7 @@ option(USE_ONETBB "Enable oneTBB library for *supported* models. Enabling this o
 
 option(FETCH_ONETBB "Fetch (download) the oneTBB library for *supported* models. This uses CMake's
                   FetchContent feature. Specify version by setting FETCH_ONETBB_VERSION" OFF)
-set(FETCH_ONETBB_VERSION "v2021.10.0" CACHE STRING "Specify version of oneTBB to use if FETCH_ONETBB is ON")
+set(FETCH_ONETBB_VERSION "v2021.13.0" CACHE STRING "Specify version of oneTBB to use if FETCH_ONETBB is ON")
 
 if (FETCH_ONETBB)
     FetchContent_Declare(
@@ -96,7 +96,7 @@ option(USE_ONEDPL "Enable oneDPL library for *supported* models. Enabling this o
 
 option(FETCH_ONEDPL "Fetch (download) the oneDPL library for *supported* models. This uses CMake's
                   FetchContent feature. Specify version by setting FETCH_ONEDPL_VERSION" OFF)
-set(FETCH_ONEDPL_VERSION "oneDPL-2022.2.0-rc1" CACHE STRING "Specify version of oneTBB to use if FETCH_ONEDPL is ON")
+set(FETCH_ONEDPL_VERSION "oneDPL-2022.6.0-rc1" CACHE STRING "Specify version of oneTBB to use if FETCH_ONEDPL is ON")
 
 if (FETCH_ONEDPL)
     FetchContent_Declare(

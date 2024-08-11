@@ -2,7 +2,7 @@
 
 set -eu
 
-export NVHPC_DIR="/opt/nvidia/hpc_sdk/Linux_x86_64/23.5"
+export NVHPC_DIR="/opt/nvidia/hpc_sdk/Linux_x86_64/24.7"
 export CUDA_DIR="$NVHPC_DIR/cuda/"
 export PATH=$NVHPC_DIR/compilers/bin/:${PATH:-}
 export KOKKOS_DIR="/home/tom/Downloads/kokkos-4.0.01/"
@@ -13,7 +13,7 @@ export CPU_RANKS=$(($(nproc) / 2))
 export GPU_RANKS=3
 
 VERBOSE="ON"
-PROBLEM="InputDecks/clover_bm16_short.in"
+PROBLEM="InputDecks/clover_bm16_very_short.in"
 
 declare -A enabled_models=(
   ["serial"]=true
@@ -79,10 +79,10 @@ function test_nompi() {
   )
   (
     :
-    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_TBB=ON
-    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONEDPL=OPENMP
-    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_TBB=ON
-    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONEDPL=OPENMP
+    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONETBB=ON -DFETCH_ONETBB=ON -DCXX_EXTRA_LIBRARIES=tbb
+    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONEDPL=OPENMP -DFETCH_ONEDPL=ON
+    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONETBB=ON -DFETCH_ONETBB=ON -DCXX_EXTRA_LIBRARIES=tbb
+    test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DCXX_EXTRA_FLAGS="-Ofast" -DUSE_ONEDPL=OPENMP -DFETCH_ONEDPL=ON
     test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=nvc++ -DCXX_EXTRA_FLAGS="-Ofast;-stdpar;-target=multicore"
     test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=nvc++ -DCXX_EXTRA_FLAGS="-Ofast;-stdpar;-gpu=cc61"
   )
@@ -110,9 +110,9 @@ function test_nompi() {
   )
   (
     :
-    test_nompi "0" cuda -DCXX_EXTRA_FLAGS="-Ofast" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
-    test_nompi "0" cuda -DMANAGED_ALLOC=ON -DCXX_EXTRA_FLAGS="-Ofast" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
-    test_nompi "0" cuda -DSYNC_ALL_KERNELS=ON -DCXX_EXTRA_FLAGS="-Ofast" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
+    test_nompi "0" cuda -DCXX_EXTRA_FLAGS="-O3" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
+    test_nompi "0" cuda -DMANAGED_ALLOC=ON -DCXX_EXTRA_FLAGS="-O3" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
+    test_nompi "0" cuda -DSYNC_ALL_KERNELS=ON -DCXX_EXTRA_FLAGS="-O3" -DCMAKE_CUDA_COMPILER=nvcc -DCUDA_ARCH=sm_60
   )
   (
     :
@@ -136,8 +136,8 @@ function test_nompi() {
   (
     :
     set +eu
-    source /opt/intel/oneapi/tbb/2021.10.0/env/vars.sh
-    source /opt/intel/oneapi/compiler/2023.2.0/env/vars.sh
+    source /opt/intel/oneapi/tbb/2021.13/env/vars.sh
+    source /opt/intel/oneapi/compiler/2024.2/env/vars.sh
     set -eu
     export DPCPP_CPU_NUM_CUS=1
     export DPCPP_CPU_SCHEDULE=static
@@ -149,8 +149,8 @@ function test_nompi() {
   (
     :
     set +eu
-    source /opt/intel/oneapi/tbb/2021.10.0/env/vars.sh
-    source /opt/intel/oneapi/compiler/2023.2.0/env/vars.sh --include-intel-llvm
+    source /opt/intel/oneapi/tbb/2021.13/env/vars.sh
+    source /opt/intel/oneapi/compiler/2024.2/env/vars.sh --include-intel-llvm
     set -eu
     cuda_sycl_flags="-fsycl-targets=nvptx64-nvidia-cuda;-Xsycl-target-backend;--cuda-gpu-arch=sm_60;--cuda-path=$CUDA_DIR"
     test_nompi "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONEDPL=DPCPP -DCXX_EXTRA_FLAGS="-fsycl;$cuda_sycl_flags"
@@ -180,10 +180,10 @@ function test_nompi() {
   test_mpi $CPU_RANKS "0" serial -DCMAKE_CXX_COMPILER=clang++
   (
     :
-    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DUSE_TBB=ON
-    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DUSE_ONEDPL=OPENMP
-    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_TBB=ON
-    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONEDPL=OPENMP
+    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DUSE_ONETBB=ON -DFETCH_ONETBB=ON -DCXX_EXTRA_LIBRARIES=tbb
+    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=g++ -DUSE_ONEDPL=OPENMP -DFETCH_ONEDPL=ON
+    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONETBB=ON -DFETCH_ONETBB=ON -DCXX_EXTRA_LIBRARIES=tbb
+    test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONEDPL=OPENMP -DFETCH_ONEDPL=ON
     test_mpi $CPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=nvc++ -DCXX_EXTRA_FLAGS="-Ofast;-stdpar;-target=multicore"
     test_mpi $GPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=nvc++ -DCXX_EXTRA_FLAGS="-Ofast;-stdpar;-gpu=cc61;--restrict"
   )
@@ -223,8 +223,8 @@ function test_nompi() {
     :
     set +eu
     module load mpi
-    source /opt/intel/oneapi/tbb/2021.10.0/env/vars.sh
-    source /opt/intel/oneapi/compiler/2023.2.0/env/vars.sh
+    source /opt/intel/oneapi/tbb/2021.13/env/vars.sh
+    source /opt/intel/oneapi/compiler/2024.2/env/vars.sh
     set -eu
     export DPCPP_CPU_NUM_CUS=1
     export DPCPP_CPU_SCHEDULE=static
@@ -250,8 +250,8 @@ function test_nompi() {
     :
     set +eu
     module load mpi
-    source /opt/intel/oneapi/tbb/2021.10.0/env/vars.sh
-    source /opt/intel/oneapi/compiler/2023.2.0/env/vars.sh --include-intel-llvm
+    source /opt/intel/oneapi/tbb/2021.13/env/vars.sh
+    source /opt/intel/oneapi/compiler/2024.2/env/vars.sh --include-intel-llvm
     set -eu
     cuda_sycl_flags="-fsycl-targets=nvptx64-nvidia-cuda;-Xsycl-target-backend;--cuda-gpu-arch=sm_60;--cuda-path=$CUDA_DIR"
     test_mpi $GPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONEDPL=DPCPP -DCXX_EXTRA_FLAGS="-fsycl;$cuda_sycl_flags"
@@ -275,8 +275,8 @@ function test_nompi() {
 
 ### CUDA-aware MPI ###
 (
-  export MPI_HOME=/opt/nvidia/hpc_sdk/Linux_x86_64/23.5/comm_libs/openmpi/openmpi-3.1.5/
-  export PATH="/opt/nvidia/hpc_sdk/Linux_x86_64/23.5/comm_libs/openmpi/openmpi-3.1.5/bin/:${PATH:-}"
+  export MPI_HOME=/opt/nvidia/hpc_sdk/Linux_x86_64/24.7/comm_libs/openmpi/openmpi-3.1.5/
+  export PATH="/opt/nvidia/hpc_sdk/Linux_x86_64/24.7/comm_libs/openmpi/openmpi-3.1.5/bin/:${PATH:-}"
   (
     :
     test_mpi $GPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=nvc++ -DCXX_EXTRA_FLAGS="-Ofast;-stdpar;-gpu=cc61;--restrict"
@@ -302,8 +302,8 @@ function test_nompi() {
   (
     :
     set +eu
-    source /opt/intel/oneapi/tbb/2021.10.0/env/vars.sh
-    source /opt/intel/oneapi/compiler/2023.2.0/env/vars.sh --include-intel-llvm
+    source /opt/intel/oneapi/tbb/2021.13/env/vars.sh
+    source /opt/intel/oneapi/compiler/2024.2/env/vars.sh --include-intel-llvm
     set -eu
     cuda_sycl_flags="-fsycl-targets=nvptx64-nvidia-cuda;-Xsycl-target-backend;--cuda-gpu-arch=sm_60;--cuda-path=$CUDA_DIR"
     test_mpi $GPU_RANKS "0" std-indices -DCMAKE_CXX_COMPILER=clang++ -DUSE_ONEDPL=DPCPP -DCXX_EXTRA_FLAGS="-fsycl;$cuda_sycl_flags"

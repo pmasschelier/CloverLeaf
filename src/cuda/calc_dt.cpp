@@ -47,8 +47,6 @@ void calc_dt_kernel(global_variables &globals, int x_min, int x_max, int y_min, 
   //   DO j=x_min,x_max
   //	Kokkos::MDRangePolicy <Kokkos::Rank<2>> policy({x_min + 1, y_min + 1}, {x_max + 2, y_max + 2});
 
-  auto policy = clover::Range2d(x_min + 1, y_min + 1, x_max + 2, y_max + 2);
-
   int xStart = x_min + 1, xEnd = x_max + 2;
   int yStart = y_min + 1, yEnd = y_max + 2;
   int sizeX = xEnd - xStart;
