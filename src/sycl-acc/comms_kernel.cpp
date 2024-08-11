@@ -31,10 +31,13 @@
 //  Even without these modifications CloverLeaf weak scales well on moderately sized
 //  systems of the order of 10K cores.
 
+#include <sstream>
+
 #include "comms_kernel.h"
 #include "comms.h"
 #include "context.h"
 #include "pack_kernel.h"
+
 
 void clover_allocate_buffers(global_variables &globals, parallel_ &parallel) {
 

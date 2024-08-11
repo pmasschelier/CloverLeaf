@@ -17,6 +17,8 @@
  CloverLeaf. If not, see http://www.gnu.org/licenses/.
  */
 
+#include <cmath>
+
 #include "calc_dt.h"
 #include "context.h"
 #include "sycl_reduction.hpp"

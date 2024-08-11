@@ -1,134 +1,14 @@
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-project(cloverleaf VERSION 1.0 LANGUAGES C CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+if (CMAKE_VERSION VERSION_GREATER_EQUAL "3.24.0")
+    cmake_policy(SET CMP0135 NEW)
+endif ()
 
-set(CMAKE_VERBOSE_MAKEFILE ON)
-
-# some nicer defaults for standard C
+project(cloverleaf VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
 include(FetchContent)
-
-######
-#set(MODEL hip)
-######
-
-if (NOT MODEL)
-
-    #    set(MODEL std-indices)
-    #    set(NVHPC_OFFLOAD cc60)
-    #        set(CXX_EXTRA_FLAGS
-    #                -stdpar
-    #                -gpu=cc61
-    #                --restrict
-    #                -Mllvm-fast
-    #                -Ktrap=none
-    #                -Minfo=accel
-    #                -Minfo=stdpar)
-    #    set(USE_TBB ON)
-    #    set(ENABLE_MPI ON)
-
-    set(MODEL sycl-acc)
-    set(SYCL_COMPILER ONEAPI-ICPX)
-
-    set(ENV{HIPSYCL_TARGETS} omp.accelerated)
-    set(SYCL_COMPILER HIPSYCL)
-    set(SYCL_COMPILER_DIR /opt/hipsycl/485ea80/)
-
-#    set(SYCL_COMPILER_DIR /opt/intel/oneapi/compiler/2023.1.0/linux/bin-llvm/)
-#    set(CXX_EXTRA_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-#    set(CXX_EXTRA_LINK_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-    set(ENABLE_MPI ON)
-#    set(USE_HOSTTASK ON)
-
-
-endif ()
-
-#if (NOT MODEL)
-#    set(MODEL hip)
-#    SET(CMAKE_CXX_COMPILER /usr/lib/aomp_17.0-1/bin/hipcc)
-#    set(ENABLE_MPI ON)
-#endif ()
-
-
-########
-#########
-
-
-
-#if (NOT MODEL)
-#    set(MODEL sycl-acc)
-#    set(SYCL_COMPILER ONEAPI-ICPX)
-#    set(SYCL_COMPILER_DIR /opt/intel/oneapi/compiler/2023.1.0/linux/bin-llvm/)
-#    set(ENABLE_MPI ON)
-#    set(MPI_HOME /usr/lib64/openmpi/)
-#    set(USE_RANGE2D_MODE RANGE2D_NORMAL)
-#endif ()
-
-#set(NVHPC_OFFLOAD cc60)
-#set(CXX_EXTRA_FLAGS -stdpar=multicore)
-###########
-#set(MODEL serial)
-#########
-#if (NOT MODEL)
-#    set(MODEL kokkos)
-#    set(KOKKOS_IN_TREE /home/tom/Downloads/kokkos-4.0.01/)
-#    set(Kokkos_ENABLE_OPENMP ON)
-##    set(CXX_EXTRA_FLAGS --coverage)
-#    set(ENABLE_MPI ON)
-#    set(MPI_HOME /usr/lib64/openmpi/)
-#endif ()
-
-#if (NOT MODEL)
-#    set(MODEL omp-target)
-#    set(ENABLE_MPI ON)
-##    set(CXX_EXTRA_FLAGS -fopenmp -foffload=nvptx-none -foffload=-lm -fno-fast-math -fno-associative-math)
-##    set(CXX_EXTRA_LINK_FLAGS -fopenmp -foffload=nvptx-none -foffload=-lm -fno-fast-math -fno-associative-math)
-#    set(CXX_EXTRA_LIBRARIES atomic)
-#    set(MPI_HOME /usr/lib64/openmpi/)
-#endif ()
-
-########
-######
-#if (NOT MODEL)
-#    set(MODEL cuda)
-#    set(CMAKE_CUDA_COMPILER /opt/nvidia/hpc_sdk/Linux_x86_64/23.3/compilers/bin/nvcc)
-#    set(CUDA_ARCH sm_60)
-#    set(ENABLE_PROFILING ON)
-#    set(MPI_HOME /usr/lib64/openmpi/)
-#endif ()
-
-######
-#set(MODEL sycl)
-#set(SYCL_COMPILER ONEAPI-DPCPP)
-#set(SYCL_COMPILER_DIR /opt/intel/oneapi/compiler/2023.1.0/linux/bin-llvm/)
-#set(CXX_EXTRA_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-#set(CXX_EXTRA_LINK_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-######
-#set(MODEL sycl-acc)
-#set(SYCL_COMPILER ONEAPI-ICPX)
-#set(SYCL_COMPILER_DIR /opt/intel/oneapi/compiler/2023.1.0/linux/bin-llvm/)
-#set(CXX_EXTRA_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-#set(CXX_EXTRA_LINK_FLAGS -fsycl-targets=nvptx64-nvidia-cuda --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/ -Xsycl-target-backend --cuda-gpu-arch=sm_60)
-#set(ENABLE_MPI ON)
-#set(USE_HOSTTASK ON)
-#set(ENABLE_PROFILING OFF)
-
-
-######
-#set(CMAKE_CXX_COMPILER g++)
-#set(CMAKE_C_COMPILER gcc)
-#set(CMAKE_CUDA_HOST_COMPILER g++)
-######
-#set(MODEL omp)
-#set(OFFLOAD NVIDIA:sm_60)
-#set(CXX_EXTRA_FLAGS --cuda-path=/opt/nvidia/hpc_sdk/Linux_x86_64/2023/cuda/)
-
-
-#set(MPI_HOME /usr/lib64/openmpi/)
 
 
 ## Flags for debugging only, enable for development (ASan only works on few models)
@@ -275,7 +155,7 @@ list(APPEND IMPL_SOURCES
         driver/comms.cpp
         driver/visit.cpp
         driver/mpi_shim.cpp
-        )
+)
 
 set(MODEL_SRC
         accelerate.cpp
@@ -349,14 +229,14 @@ if (CMAKE_CXX_FLAGS_${BUILD_TYPE})
     wipe_gcc_style_optimisation_flags(CMAKE_CXX_FLAGS_${BUILD_TYPE})
 endif ()
 
-message(STATUS "Default ${CMAKE_BUILD_TYPE} flags are `${DEFAULT_${BUILD_TYPE}_CXX_FLAGS}`, set ${BUILD_TYPE}_CXX_FLAGS to override (CXX_EXTRA_* flags are not affected)")
+message(STATUS "Default ${CMAKE_BUILD_TYPE} flags are `${DEFAULT_${BUILD_TYPE}_FLAGS}`, set ${BUILD_TYPE}_FLAGS to override (CXX_EXTRA_* flags are not affected)")
 
 
 # setup common build flag defaults if there are no overrides
-if (NOT DEFINED ${BUILD_TYPE}_CXX_FLAGS)
-    set(ACTUAL_${BUILD_TYPE}_CXX_FLAGS ${DEFAULT_${BUILD_TYPE}_CXX_FLAGS})
-elseif ()
-    set(ACTUAL_${BUILD_TYPE}_CXX_FLAGS ${${BUILD_TYPE}_CXX_FLAGS})
+if (NOT DEFINED ${BUILD_TYPE}_FLAGS)
+    set(ACTUAL_${BUILD_TYPE}_FLAGS ${DEFAULT_${BUILD_TYPE}_FLAGS})
+else ()
+    set(ACTUAL_${BUILD_TYPE}_FLAGS ${${BUILD_TYPE}_FLAGS})
 endif ()
 
 if (NOT ENABLE_MPI)
@@ -374,11 +254,11 @@ message(STATUS "Platform    : ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "Sources     : ${IMPL_SOURCES}")
 message(STATUS "Libraries   : ${LINK_LIBRARIES} ${CXX_EXTRA_LIBRARIES}")
 
-message(STATUS "CXX Flags   : ${CMAKE_CXX_FLAGS_${BUILD_TYPE}} ${ACTUAL_${BUILD_TYPE}_CXX_FLAGS} ${CXX_EXTRA_FLAGS}
+message(STATUS "CXX Flags   : ${CMAKE_CXX_FLAGS_${BUILD_TYPE}} ${ACTUAL_${BUILD_TYPE}_FLAGS} ${CXX_EXTRA_FLAGS}
     CXX flags derived from (CMake + (Override ? Override : Default) + Extras), where:
         CMake                    = `${CMAKE_CXX_FLAGS_${BUILD_TYPE}}`
-        Default                  = `${DEFAULT_${BUILD_TYPE}_CXX_FLAGS}`
-        Override (${BUILD_TYPE}_CXX_FLAGS) = `${${BUILD_TYPE}_CXX_FLAGS}`
+        Default                  = `${DEFAULT_${BUILD_TYPE}_FLAGS}`
+        Override (${BUILD_TYPE}_FLAGS) = `${${BUILD_TYPE}_FLAGS}`
         Extras (CXX_EXTRA_FLAGS) = `${CXX_EXTRA_FLAGS}`")
 message(STATUS "CXX Link Flags  : ${LINK_FLAGS} ${CXX_EXTRA_LINK_FLAGS}")
 message(STATUS "CXX Linker Flags: ${CMAKE_EXE_LINKER_FLAGS} ${CXX_EXTRA_LINKER_FLAGS} ")
@@ -398,8 +278,8 @@ if (CXX_EXTRA_LIBRARIES)
 endif ()
 target_include_directories(${EXE_NAME} PRIVATE driver ${IMPL_DIRECTORIES})
 
-target_compile_options(${EXE_NAME} PUBLIC "$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:Release>:${ACTUAL_RELEASE_CXX_FLAGS};${CXX_EXTRA_FLAGS}>>")
-target_compile_options(${EXE_NAME} PUBLIC "$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:Debug>:${ACTUAL_DEBUG_CXX_FLAGS};${CXX_EXTRA_FLAGS}>>")
+target_compile_options(${EXE_NAME} PUBLIC "$<$<CONFIG:Release>:${ACTUAL_RELEASE_FLAGS};${CXX_EXTRA_FLAGS}>")
+target_compile_options(${EXE_NAME} PUBLIC "$<$<CONFIG:Debug>:${ACTUAL_DEBUG_FLAGS};${CXX_EXTRA_FLAGS}>")
 
 target_link_options(${EXE_NAME} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:LINKER:${CXX_EXTRA_LINKER_FLAGS}>)
 target_link_options(${EXE_NAME} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:${LINK_FLAGS};${CXX_EXTRA_LINK_FLAGS}>)
